@@ -1,1 +1,1 @@
-web:ts-node/src/serverTesseractApi.ts
+web: npm prod
