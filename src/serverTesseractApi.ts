@@ -82,4 +82,4 @@ app.post('/mrz', async function(req: express.Request, res: express.Response): Pr
 });
 
 log.debug(`authServer listening on port ${PORT}`);
-export const server = app.listen(PORT);
+export const server = app.listen(process.env.PORT || PORT);
