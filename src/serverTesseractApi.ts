@@ -44,41 +44,62 @@ app.post('/mrz', async function(req: express.Request, res: express.Response): Pr
 
     const sampleFile = req.files.mrzphoto;
     console.log('--------- jimp mrz ---------', sampleFile.data.length);
-    Jimp.read(sampleFile.data).then(image => {
-        // image
-        //     .normalize()
-        //     .greyscale()
-        //     .contrast(0.3)
-        //     .writeAsync('grey.png');
-        image
-            .normalize()
-            .greyscale()
-            .contrast(0.3)
-            .getBufferAsync(Jimp.MIME_PNG)
-            .then(uploadBuffer => {
-                (async () => {
-                    try {
-                        const {
-                            data: { text },
-                        } = await worker.recognize(uploadBuffer);
-                        // await worker.terminate();
-                        const result = text.split('\n').filter(line => {
-                            return line.length > 40;
-                        });
-                        const data = mrz.parse(result);
-                        const dataDetails = data.details.map(details => {
-                            if (details.field === 'documentNumberCheckDigit' && details.value == null)
-                                throw Error('MRZ checksum failed');
-                            return { field: details.field, value: details.value };
-                        });
-                        res.json({ data: dataDetails });
-                    } catch (err) {
-                        console.log(err);
-                        res.status(500).json({ error: err });
-                    }
-                })();
+    (async () => {
+        try {
+            const {
+                data: { text },
+            } = await worker.recognize(sampleFile.data);
+            // await worker.terminate();
+            const result = text.split('\n').filter(line => {
+                return line.length > 40;
             });
-    });
+            const data = mrz.parse(result);
+            const dataDetails = data.details.map(details => {
+                if (details.field === 'documentNumberCheckDigit' && details.value == null)
+                    throw Error('MRZ checksum failed');
+                return { field: details.field, value: details.value };
+            });
+            res.json({ data: dataDetails });
+        } catch (err) {
+            console.log(err);
+            res.status(500).json({ error: err });
+        }
+    })();
+    // Jimp.read(sampleFile.data).then(image => {
+    //     // image
+    //     //     .normalize()
+    //     //     .greyscale()
+    //     //     .contrast(0.3)
+    //     //     .writeAsync('grey.png');
+    //     image
+    //         .normalize()
+    //         .greyscale()
+    //         .contrast(0.3)
+    //         .getBufferAsync(Jimp.MIME_PNG)
+    //         .then(uploadBuffer => {
+    //             (async () => {
+    //                 try {
+    //                     const {
+    //                         data: { text },
+    //                     } = await worker.recognize(uploadBuffer);
+    //                     // await worker.terminate();
+    //                     const result = text.split('\n').filter(line => {
+    //                         return line.length > 40;
+    //                     });
+    //                     const data = mrz.parse(result);
+    //                     const dataDetails = data.details.map(details => {
+    //                         if (details.field === 'documentNumberCheckDigit' && details.value == null)
+    //                             throw Error('MRZ checksum failed');
+    //                         return { field: details.field, value: details.value };
+    //                     });
+    //                     res.json({ data: dataDetails });
+    //                 } catch (err) {
+    //                     console.log(err);
+    //                     res.status(500).json({ error: err });
+    //                 }
+    //             })();
+    //         });
+    // });
 });
 
 log.debug(`authServer listening on port ${PORT}`);
