@@ -8,8 +8,8 @@
   "main": "serverMockApi.ts",
   "scripts": {
     "clean": "rm -rf dist",
-    "prod": "ts-node ./src/serverTesseractApi.ts",
-    "start": "tsc-watch --onSuccess 'node ./dist/serverTesseractApi.js'",
+    "start": "ts-node ./src/serverTesseractApi.ts",
+    "dev": "tsc-watch --onSuccess 'node ./dist/serverTesseractApi.js'",
     "test": "cross-env NODE_ENV=test jest",
     "lint:fix": "eslint **/*.ts --fix"
   },
