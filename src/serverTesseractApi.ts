@@ -43,7 +43,7 @@ app.post('/mrz', async function(req: express.Request, res: express.Response): Pr
     }
 
     const sampleFile = req.files.mrzphoto;
-
+    console.log('--------- jimp mrz ---------', sampleFile.data.length);
     Jimp.read(sampleFile.data).then(image => {
         // image
         //     .normalize()
