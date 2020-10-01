@@ -31,6 +31,10 @@ const worker = createWorker({
     await worker.initialize('OCRB');
 })();
 
+app.get('/', function(req: express.Request, res: express.Response) {
+    res.status(200).send("Healthy")
+});
+
 app.post('/mrz', async function(req: express.Request, res: express.Response): Promise<void> {
     console.log('--------- test mrz ---------');
     if (!req.files || Object.keys(req.files).length === 0) {
@@ -67,7 +71,7 @@ app.post('/mrz', async function(req: express.Request, res: express.Response): Pr
                                 throw Error('MRZ checksum failed');
                             return { field: details.field, value: details.value };
                         });
-                        res.json({ data: dataDetails }).status(200);
+                        res.json({ data: dataDetails });
                     } catch (err) {
                         console.log(err);
                         res.status(500).json({ error: err });
