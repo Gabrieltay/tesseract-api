@@ -1,1 +1,1 @@
-node ./dist/serverTesseractApi.js
+web:ts-node/src/serverTesseractApi.ts
